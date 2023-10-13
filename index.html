@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Bootstrap Table Example</title>
+</head>
+<body>
+
+<div class="container">
+    <h1>Events Management System</h1>
+    <table class="table table-striped" id="data-table">
+        <thead>
+            <tr>
+                <th>Event</th>
+                <th>Speaker</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+          
+        </tbody>
+    </table>
+    <div class="container mt-5">
+        <h1>Form</h1>
+        <form>
+            <div class="mb-3">
+                <label for="firstName" class="form-label">Event name</label>
+                <input type="text" class="form-control" id="event" name="firstName" placeholder="Enter event name">
+            </div>
+            <div class="mb-3">
+                <label for="age" class="form-label">Speaker Name</label>
+                <input type="text" class="form-control" id="speaker" name="age" placeholder="Enter Speaker name">
+            </div>
+            <div class="mb-3">
+                <label for="username" class="form-label">Schedule</label>
+                <input type="text" class="form-control" id="schedule" name="username" placeholder="Enter schedule">
+            </div>
+            <button type="submit" class="btn btn-primary" onclick="insert()">Insert</button>
+            <button type="submit" class="btn btn-primary" onclick="update()">Update</button>
+            <button type="submit" class="btn btn-primary" onclick="deletes()">Delete</button>
+        </form>
+    </div>
+
+</div>
+
+<!-- Include Bootstrap JS and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+
+
+        var table = document.getElementById("data-table").getElementsByTagName('tbody')[0];
+        
+
+       window.onload=(e)=>{
+        const data=fetch("http://localhost:3000/").then(res=>res.json()).then(d=>{
+        d.map(data=>{
+            var newRow = table.insertRow(table.rows.length)
+            var cell1 = newRow.insertCell(0);
+        var cell2 = newRow.insertCell(1);
+        var cell3 = newRow.insertCell(2);
+            cell1.innerHTML = data.eventName;
+        cell2.innerHTML = data.speaker;
+        cell3.innerHTML = data.schedule;
+        })        })
+       }
+       async function insert(){
+        const event=document.getElementById('event').value
+        const speaker=document.getElementById('speaker').value
+        const schedule=document.getElementById('schedule').value
+        const data={
+            eventName:event,
+            speaker:speaker,
+            schedule:schedule
+        }
+        console.log(data);
+        await fetch('http://localhost:3000/insert',{
+            method:'POST',
+            body:JSON.stringify(data),
+            headers: {
+    "Content-type": "application/json; charset=UTF-8"
+  }
+        })
+        }
+
+        async function update(){
+            const event=document.getElementById('event').value
+        const speaker=document.getElementById('speaker').value
+        const schedule=document.getElementById('schedule').value
+        const datas={
+            eventName:event,
+            speaker:speaker,
+            schedule:schedule
+        }
+        await fetch('http://localhost:3000/update',{
+            method:'PUT',
+            body:JSON.stringify({
+                events:event,
+                data:datas
+            }),
+            headers: {
+    "Content-type": "application/json; charset=UTF-8"
+  }
+        })
+        }
+        async function deletes(){
+            const event=document.getElementById('event').value
+            await fetch('http://localhost:3000/delete',{
+                method:'DELETE',
+                body:JSON.stringify({
+                    events:event
+                }),headers: {    
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*' },
+            })
+        }
+
+
+</script>
+
+</body>
+</html>
